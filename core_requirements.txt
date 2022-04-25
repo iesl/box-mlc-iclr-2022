@@ -1,0 +1,26 @@
+torch>=1.6.0
+allennlp==2.9.0
+cached-path==1.0.2
+torch-optimizer
+scikit-learn>=0.23.2
+scipy>=1.5.2
+wandb>=0.12.10
+wandb-allennlp
+tensorboard
+jsonlines
+box-embeddings @ git+https://github.com/dhruvdcoder/box-embeddings.git@07c1ba38312250cec9cc4e212c33587e2febcb22
+jupyter
+networkx
+seaborn
+ipywidgets
+xmltodict
+scikit-multilearn
+liac-arff
+wcmatch
+sympy
+emrichen
+jinja2-cli[yaml]
+wandb
+wandb-allennlp
+wandb-utils
+gdown

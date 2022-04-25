@@ -1,0 +1,97 @@
+{
+    "dataset_reader": {
+        "type": "arff",
+        "num_labels": 500
+    },
+    "model": {
+        "type": "chmcnn",
+        "constraint_violation": {
+            "hierarchy_reader": {
+                "type": "networkx-edgelist",
+                "filepath": ".data/expr_FUN/hierarchy_tc.edgelist"
+            }
+        },
+        "debug_level": 0,
+        "feedforward": {
+            "activations": [
+                "softplus",
+                "softplus",
+                "softplus"
+            ],
+            "dropout": 0.3,
+            "hidden_dims": [
+                1000,
+                1000,
+                1000
+            ],
+            "input_dim": 561,
+            "num_layers": 3
+        },
+        "hierarchy": {
+            "type": "networkx-edgelist",
+            "filepath": ".data/expr_FUN/hierarchy_tc.edgelist"
+        },
+        "initializer": {
+            "regexes": [
+                [
+                    ".*_feedforward._linear_layers.*weight",
+                    {
+                        "type": "kaiming_uniform"
+                    }
+                ],
+                [
+                    ".*linear_layers.*bias",
+                    {
+                        "type": "zero"
+                    }
+                ]
+            ]
+        }
+    },
+    "train_data_path": "{.data/expr_FUN/train-normalized.arff,.data/expr_FUN/dev-normalized.arff}",
+    "validation_data_path": ".data/expr_FUN/dev-normalized.arff",
+    "test_data_path": ".data/expr_FUN/test-normalized.arff",
+    "trainer": {
+        "callbacks": [
+            "track_epoch_callback",
+            {
+                "save_model_archive": true,
+                "should_log_parameter_statistics": false,
+                "sub_callbacks": [
+                    {
+                        "priority": 100,
+                        "type": "log_best_validation_metrics"
+                    }
+                ],
+                "type": "wandb_allennlp",
+                "watch_model": false
+            }
+        ],
+        "checkpointer": {
+            "type": "default",
+            "keep_most_recent_by_count": 1
+        },
+        "cuda_device": 0,
+        "num_epochs": 44,
+        "optimizer": {
+            "type": "adamw",
+            "lr": 0.0001,
+            "weight_decay": 0.1
+        },
+        "patience": 44,
+        "validation_metric": "+MAP"
+    },
+    "type": "train_test_log_to_wandb",
+    "data_loader": {
+        "batch_size": 4,
+        "shuffle": true
+    },
+    "evaluate_on_test": true,
+    "numpy_seed": 111,
+    "pytorch_seed": 111,
+    "random_seed": 111,
+    "validation_dataset_reader": {
+        "type": "arff",
+        "num_labels": 500
+    }
+}

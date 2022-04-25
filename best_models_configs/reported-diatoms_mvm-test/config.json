@@ -1,0 +1,96 @@
+{
+    "dataset_reader": {
+        "type": "arff",
+        "num_labels": 399
+    },
+    "model": {
+        "type": "baseline",
+        "constraint_violation": {
+            "hierarchy_reader": {
+                "type": "networkx-edgelist",
+                "filepath": ".data/Diatoms/hierarchy_tc.edgelist"
+            }
+        },
+        "debug_level": 0,
+        "feedforward": {
+            "activations": [
+                "softplus",
+                "softplus",
+                "softplus"
+            ],
+            "hidden_dims": [
+                1000,
+                1000,
+                1000
+            ],
+            "input_dim": 371,
+            "num_layers": 3
+        },
+        "hierarchy": {
+            "type": "networkx-edgelist",
+            "filepath": ".data/Diatoms/hierarchy_tc.edgelist"
+        },
+        "initializer": {
+            "regexes": [
+                [
+                    ".*_feedforward._linear_layers.*weight",
+                    {
+                        "type": "kaiming_uniform"
+                    }
+                ],
+                [
+                    ".*linear_layers.*bias",
+                    {
+                        "type": "zero"
+                    }
+                ]
+            ]
+        }
+    },
+    "train_data_path": "{.data/Diatoms/train-normalized.arff,.data/Diatoms/dev-normalized.arff}",
+    "validation_data_path": ".data/Diatoms/dev-normalized.arff",
+    "test_data_path": ".data/Diatoms/test-normalized.arff",
+    "trainer": {
+        "callbacks": [
+            "track_epoch_callback",
+            {
+                "save_model_archive": true,
+                "should_log_parameter_statistics": false,
+                "sub_callbacks": [
+                    {
+                        "priority": 100,
+                        "type": "log_best_validation_metrics"
+                    }
+                ],
+                "type": "wandb_allennlp",
+                "watch_model": false
+            }
+        ],
+        "checkpointer": {
+            "type": "default",
+            "keep_most_recent_by_count": 1
+        },
+        "cuda_device": 0,
+        "num_epochs": 54,
+        "optimizer": {
+            "type": "adamw",
+            "lr": 0.0001,
+            "weight_decay": 0.01
+        },
+        "patience": 54,
+        "validation_metric": "+MAP"
+    },
+    "type": "train_test_log_to_wandb",
+    "data_loader": {
+        "batch_size": 4,
+        "shuffle": true
+    },
+    "evaluate_on_test": true,
+    "numpy_seed": 111,
+    "pytorch_seed": 111,
+    "random_seed": 111,
+    "validation_dataset_reader": {
+        "type": "arff",
+        "num_labels": 399
+    }
+}

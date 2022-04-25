@@ -1,0 +1,161 @@
+{
+    "dataset_reader": {
+        "type": "arff",
+        "num_labels": 500
+    },
+    "model": {
+        "type": "mbm",
+        "constraint_violation": {
+            "hierarchy_reader": {
+                "type": "networkx-edgelist",
+                "filepath": ".data/spo_FUN/hierarchy_tc.edgelist"
+            }
+        },
+        "debug_level": 0,
+        "feedforward": {
+            "activations": [
+                "softplus",
+                "softplus",
+                "softplus"
+            ],
+            "dropout": 0,
+            "hidden_dims": [
+                1000,
+                1000,
+                1000
+            ],
+            "input_dim": 86,
+            "num_layers": 3
+        },
+        "initializer": {
+            "regexes": [
+                [
+                    ".*linear_layers.*weight",
+                    {
+                        "type": "kaiming_uniform"
+                    }
+                ],
+                [
+                    ".*linear_layers.*bias",
+                    {
+                        "type": "zero"
+                    }
+                ],
+                [
+                    "_label_embeddings.center.weight",
+                    {
+                        "type": "uniform"
+                    }
+                ],
+                [
+                    "_label_embeddings.delta",
+                    {
+                        "mean": 0.01,
+                        "std": 0.005,
+                        "type": "normal"
+                    }
+                ]
+            ]
+        },
+        "intersect": {
+            "type": "gumbel",
+            "beta": 0.0001
+        },
+        "label_embeddings": {
+            "type": "box-embedding-module",
+            "embedding_dim": 1000
+        },
+        "vec2box": {
+            "type": "vec2box",
+            "box_factory": {
+                "type": "box_factory",
+                "kwargs_dict": {
+                    "delta": 1e-05
+                },
+                "name": "center_fixed_delta_from_vector"
+            }
+        },
+        "volume": {
+            "type": "bessel-approx",
+            "beta": 0.05,
+            "gumbel_beta": 0.0001,
+            "log_scale": true
+        }
+    },
+    "train_data_path": "{.data/spo_FUN/train-normalized.arff,.data/spo_FUN/dev-normalized.arff}",
+    "validation_data_path": ".data/spo_FUN/dev-normalized.arff",
+    "test_data_path": ".data/spo_FUN/test-normalized.arff",
+    "trainer": {
+        "callbacks": [
+            "track_epoch_callback",
+            {
+                "save_model_archive": true,
+                "should_log_parameter_statistics": false,
+                "sub_callbacks": [
+                    {
+                        "priority": 100,
+                        "type": "log_best_validation_metrics"
+                    }
+                ],
+                "type": "wandb_allennlp",
+                "watch_model": false
+            }
+        ],
+        "checkpointer": {
+            "type": "default",
+            "keep_most_recent_by_count": 1
+        },
+        "cuda_device": 0,
+        "num_epochs": 28,
+        "optimizer": {
+            "type": "adamw",
+            "lr": 0.0001,
+            "parameter_groups": [
+                [
+                    [
+                        ".*linear_layers.*weight",
+                        ".*linear_layers.*bias"
+                    ],
+                    {
+                        "lr": 0.0001,
+                        "weight_decay": 0.0005
+                    }
+                ],
+                [
+                    [
+                        ".*label_embeddings.delta"
+                    ],
+                    {
+                        "lr": 0.01,
+                        "weight_decay": 0
+                    }
+                ],
+                [
+                    [
+                        ".*label_embeddings.center"
+                    ],
+                    {
+                        "lr": 0.001,
+                        "weight_decay": 0
+                    }
+                ]
+            ],
+            "weight_decay": 0
+        },
+        "patience": 28,
+        "validation_metric": "+MAP"
+    },
+    "type": "train_test_log_to_wandb",
+    "data_loader": {
+        "batch_size": 4,
+        "shuffle": true
+    },
+    "evaluate_on_test": true,
+    "numpy_seed": 111,
+    "pytorch_seed": 111,
+    "random_seed": 111,
+    "validation_dataset_reader": {
+        "type": "arff",
+        "num_labels": 500
+    }
+}

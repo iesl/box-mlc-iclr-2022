@@ -1,0 +1,14 @@
+numpy~=1.22.3
+torch==1.9.0
+allennlp~=2.9.0
+cached-path==1.0.2
+scikit-learn~=1.0.2
+networkx~=2.7.1
+jsonlines~=3.0.0
+scikit-multilearn~=0.2.0
+wcmatch~=8.3
+pandas~=1.4.2
+setuptools~=60.5.0
+tqdm~=4.63.1
+scipy~=1.8.0
+wandb-utils>=0.1.2
